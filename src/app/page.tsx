@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function MyForm() {
   const [result, setResult] = useState<string | null>(null);
