@@ -6,9 +6,9 @@ if (!process.env.DATABASE_URL) {
 
 export const getRandomFirstName = async(_sex : string = "", _yob : number = 0, _state : string = "") => {
   const sql = neon(process.env.DATABASE_URL!);
-  let sexToPass   = _sex == "" ? null : _sex;
-  let yobToPass   = (Number.isNaN(_yob) == true || _yob == 0) ? null : _yob
-  let stateToPass = _state == "" ? null : _state
+  const sexToPass   = _sex == "" ? null : _sex;
+  const yobToPass   = (Number.isNaN(_yob) == true || _yob == 0) ? null : _yob
+  const stateToPass = _state == "" ? null : _state
   const response = await sql('SELECT "CENSUS_NAMES".get_weighted_first_name(_sex => $1, _yob => $2, _state => $3);', [sexToPass, yobToPass, stateToPass]);
   return {firstName : response[0].get_weighted_first_name.toString().toUpperCase()}
 }
