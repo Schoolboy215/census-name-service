@@ -34,14 +34,18 @@ export async function POST(request: NextRequest)
         return NextResponse.json({error:'race must be one of the following values: [white, black, asian, native, hispanic]'}, {status: 400});
       }
     }
-    const randomFirstName = await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString())
-    const randomLastName = await getRandomLastName(data.race.toString())
-    return NextResponse.json(randomFirstName.firstName + " " + randomLastName.lastName);
+    const [randomFirstName, randomLastName] = await Promise.allSettled([
+      await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString()),
+      await getRandomLastName(data.race.toString())
+    ]);
+    return NextResponse.json({firstName : randomFirstName.value.firstName, lastName : randomLastName.value.lastName});
   }
   else
   {
-    const randomFirstName = await getRandomFirstName()
-    const randomLastName = await getRandomLastName()
-    return NextResponse.json(randomFirstName.firstName + " " + randomLastName.lastName);
+    const [randomFirstName, randomLastName] = await Promise.allSettled([
+      await getRandomFirstName(),
+      await getRandomLastName()
+    ]);
+    return NextResponse.json({firstName : randomFirstName.value.firstName, lastName : randomLastName.value.lastName});
   }
 }

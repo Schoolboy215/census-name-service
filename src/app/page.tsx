@@ -24,7 +24,7 @@ export default function MyForm() {
         body: formData,
       });
       const data = await res.json();
-      setResult(data);
+      setResult(data.firstName + " " + data.lastName);
       setShowModal(true);
       setTimeout(() => setVisible(true), 10); // Allow animation to apply
     } catch (error) {
