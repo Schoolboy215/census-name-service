@@ -99,6 +99,11 @@ export default function MyForm() {
           </div>
         </form>
       </div>
+      {/* Footer Bar */}
+      <footer className="fixed bottom-0 w-full bg-gray-800 text-white text-sm p-4 text-center">
+        <p>This tool uses publicly available data from the US Social Security Administration as well as the Census Bureau. Last names are from the 2010 census and first names are by year from 1910 to 2023.</p>
+        <p>James McKay <strong>2025</strong></p>
+      </footer>
 
       {/* MODAL */}
       {showModal && (
