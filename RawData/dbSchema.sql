@@ -5,6 +5,8 @@
 -- Dumped from database version 15.12
 -- Dumped by pg_dump version 17.4
 
+-- Started on 2025-03-21 11:10:48
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -18,6 +20,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- TOC entry 6 (class 2615 OID 24576)
 -- Name: CENSUS_NAMES; Type: SCHEMA; Schema: -; Owner: neondb_owner
 --
 
@@ -27,6 +30,7 @@ CREATE SCHEMA "CENSUS_NAMES";
 ALTER SCHEMA "CENSUS_NAMES" OWNER TO neondb_owner;
 
 --
+-- TOC entry 247 (class 1255 OID 90112)
 -- Name: get_weighted_first_name(text, integer, text); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
@@ -90,6 +94,7 @@ $$;
 ALTER FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text, _yob integer, _state text) OWNER TO neondb_owner;
 
 --
+-- TOC entry 246 (class 1255 OID 81929)
 -- Name: get_weighted_last_name(text); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
@@ -161,14 +166,15 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- TOC entry 233 (class 1259 OID 32788)
 -- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE TABLE "CENSUS_NAMES"."firstNames" (
-    state character varying,
-    sex character varying,
-    yob integer,
-    name character varying,
+    state character(2),
+    sex character(1),
+    yob smallint,
+    name character varying(15),
     occurences integer
 );
 
@@ -176,17 +182,17 @@ CREATE TABLE "CENSUS_NAMES"."firstNames" (
 ALTER TABLE "CENSUS_NAMES"."firstNames" OWNER TO neondb_owner;
 
 --
+-- TOC entry 234 (class 1259 OID 32793)
 -- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE TABLE "CENSUS_NAMES"."lastNames" (
-    name character varying,
+    name character varying(15),
     occurences integer,
     "pctWhite" numeric,
     "pctBlack" numeric,
     "pctApi" numeric,
     "pctAian" numeric,
-    "pct2Race" numeric,
     "pctHispanic" numeric
 );
 
@@ -194,6 +200,23 @@ CREATE TABLE "CENSUS_NAMES"."lastNames" (
 ALTER TABLE "CENSUS_NAMES"."lastNames" OWNER TO neondb_owner;
 
 --
+-- TOC entry 3201 (class 1259 OID 327729)
+-- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
+--
+
+CREATE INDEX lnsearch_idx ON "CENSUS_NAMES"."lastNames" USING btree (name, occurences, "pctWhite", "pctBlack", "pctApi", "pctAian", "pctHispanic");
+
+
+--
+-- TOC entry 3200 (class 1259 OID 327680)
+-- Name: search_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
+--
+
+CREATE INDEX fnsearch_idx ON "CENSUS_NAMES"."firstNames" USING btree (sex, yob, state);
+
+
+--
+-- TOC entry 2060 (class 826 OID 16389)
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
 --
 
@@ -201,11 +224,14 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT ALL ON SEQU
 
 
 --
+-- TOC entry 2059 (class 826 OID 16388)
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
 --
 
 ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO neon_superuser WITH GRANT OPTION;
 
+
+-- Completed on 2025-03-21 11:10:50
 
 --
 -- PostgreSQL database dump complete
