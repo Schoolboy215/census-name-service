@@ -43,13 +43,13 @@ export default function MyForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-white-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-96 dark:bg-gray-800 text-black dark:text-white">
         <h2 className="text-xl font-semibold mb-4 text-center">Generate a name!</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="sex" className="block font-medium">Sex:</label>
-            <select name="sex" className="w-full p-2 border rounded-md">
+            <label htmlFor="sex">Sex:</label>
+            <select name="sex" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
               <option value=""></option>
               <option value="M">Male</option>
               <option value="F">Female</option>
@@ -57,7 +57,7 @@ export default function MyForm() {
           </div>
           <div>
             <label htmlFor="race" className="block font-medium">Race:</label>
-            <select name="race" className="w-full p-2 border rounded-md">
+            <select name="race" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
               <option value=""></option>
               <option value="white">White</option>
               <option value="black">Black</option>
@@ -74,12 +74,12 @@ export default function MyForm() {
               max="2023"
               step="1"
               name="yob"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md dark:bg-white dark:text-black"
             />
           </div>
           <div>
             <label htmlFor="state" className="block font-medium">State:</label>
-            <select name="state" className="w-full p-2 border rounded-md">
+            <select name="state" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
               <option value=""></option>
               {stateAbbreviations.map((option) => (
                 <option key={option} value={option}>
@@ -108,14 +108,14 @@ export default function MyForm() {
       {/* MODAL */}
       {showModal && (
         <div 
-          className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm 
-            transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+          className={`fixed inset-0 flex items-center justify-center backdrop-blur-sm 
+            transition-all duration-300`}
         >
           <div 
             className={`bg-white p-6 rounded-lg shadow-lg w-80 transform transition-all duration-300 
-              ${visible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+              ${visible ? "opacity-100 scale-100" : "opacity-0 scale-15"}`}
           >
-            <h1 className="text-lg font-semibold mb-4">{result}</h1>
+            <h1 className="text-lg font-semibold mb-4 dark:text-black">{result}</h1>
             <button
               onClick={closeModal}
               className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
