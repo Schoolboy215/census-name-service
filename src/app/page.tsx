@@ -27,7 +27,6 @@ export default function MyForm() {
       setResult(data.firstName + " " + data.lastName);
       setShowModal(true);
       setTimeout(() => setVisible(true), 10); // Allow animation to apply
-      throw "test error"
     }
     catch (error)
     {
