@@ -16,7 +16,8 @@ export default function MyForm() {
     e.preventDefault();
     setLoading(true);
 
-    try {
+    try
+    {
       const formData = new FormData(e.currentTarget);
       const res = await fetch('/api/fullName', {
         method: 'POST',
@@ -26,12 +27,17 @@ export default function MyForm() {
       setResult(data.firstName + " " + data.lastName);
       setShowModal(true);
       setTimeout(() => setVisible(true), 10); // Allow animation to apply
-    } catch (error) {
+      throw "test error"
+    }
+    catch (error)
+    {
       console.error("Error fetching data:", error);
-      setResult("Error fetching data.");
+      setResult(`Error fetching data: ${error}`);
       setShowModal(true);
       setTimeout(() => setVisible(true), 10);
-    } finally {
+    }
+    finally
+    {
       setLoading(false);
     }
   }
