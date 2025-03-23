@@ -15,11 +15,12 @@ export default function MyForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    let res = null;
 
     try
     {
       const formData = new FormData(e.currentTarget);
-      const res = await fetch('/api/fullName', {
+      res = await fetch('/api/fullName', {
         method: 'POST',
         body: formData,
       });
@@ -30,14 +31,14 @@ export default function MyForm() {
     }
     catch (error)
     {
-      console.error("Error fetching data:", error);
-      setResult(`Error fetching data: ${error}`);
+      console.error("Error fetching data:", {res});
+      setResult(`Error fetching data: ${error}. Try again?`);
       setShowModal(true);
       setTimeout(() => setVisible(true), 10);
     }
     finally
     {
-      setLoading(false);
+      setLoading(false);  
     }
   }
 
