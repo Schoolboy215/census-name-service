@@ -14,31 +14,59 @@ export default function MyForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    let res = null;
+    let retries = 0;
+    const formData = new FormData(e.currentTarget);
 
-    try
+    while(true)
     {
-      const formData = new FormData(e.currentTarget);
-      res = await fetch('/api/fullName', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      setResult(data.firstName + " " + data.lastName);
-      setShowModal(true);
-      setTimeout(() => setVisible(true), 10); // Allow animation to apply
-    }
-    catch (error)
-    {
-      console.error("Error fetching data:", {res});
-      setResult(`Error fetching data: ${error}. Try again?`);
-      setShowModal(true);
-      setTimeout(() => setVisible(true), 10);
-    }
-    finally
-    {
-      setLoading(false);  
+      setLoading(true);
+      let res = null;
+
+      try
+      {
+        res = await fetch('/api/fullName', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.status == 504)
+        {
+          throw new Error("Timeout");
+        }
+        const data = await res.json();
+        setResult(data.firstName + " " + data.lastName);
+        setShowModal(true);
+        setTimeout(() => setVisible(true), 10); // Allow animation to apply
+        break;
+      }
+      catch (error)
+      {
+        if (res?.status == 504)
+        {
+          retries++;
+          if (retries < 3)
+          {
+            continue;
+          }
+          else
+          {
+            console.error("Timed out, too many retries");
+            setResult(`Timed out. Try again later`);
+          }
+        }
+        else
+        {
+          console.error("Error fetching data:", {res});
+          setResult(`Error fetching data: ${error}. Try again?`);
+        }
+        setShowModal(true);
+        setTimeout(() => setVisible(true), 10);
+        setLoading(false); 
+        break;
+      }
+      finally
+      {
+        setLoading(false);  
+      }
     }
   }
 
