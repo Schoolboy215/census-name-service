@@ -13,7 +13,8 @@
     "cross-env": "^7.0.3",
     "next": "15.2.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "xp.css": "^0.2.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
