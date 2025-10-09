@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import "xp.css/dist/XP.css";
+import "tuicss";
 
 export default function MyForm() {
   const [result, setResult] = useState<string | null>(null);
@@ -83,27 +83,22 @@ export default function MyForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-white-100">
-      <div className="window" style={{width: 350}}>
-        <div className="title-bar">
-          <div className="title-bar-text">Generate a name!</div>
-          <div className="title-bar-controls">
-            <button aria-label="Help" onClick={handleHelp}></button>
-          </div>
-        </div>
-        <div className="window-body">
-          <form onSubmit={handleSubmit} className="space-y-3">
+    <body className="center" style={{padding: "50px"}}>
+      <div className="tui-window">
+        <form onSubmit={handleSubmit}>
+          <fieldset className="tui-fieldset">
+            <legend className="center">CENSUS NAME GENERATOR</legend>
             <div>
-              <label htmlFor="sex">Sex:</label>
-              <select name="sex" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
+              <label htmlFor="sex">Sex..........:</label>
+              <select className="tui-input" name="sex">
                 <option value=""></option>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
               </select>
             </div>
             <div>
-              <label htmlFor="race" className="block font-medium">Race:</label>
-              <select name="race" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
+              <label htmlFor="race">Race.........:</label>
+              <select name="race" className="tui-input">
                 <option value=""></option>
                 <option value="white">White</option>
                 <option value="black">Black</option>
@@ -113,19 +108,19 @@ export default function MyForm() {
               </select>
             </div>
             <div>
-              <label htmlFor="yob" className="block font-medium">Year of Birth:</label>
+              <label htmlFor="yob">Year of Birth:</label>
               <input
                 type="number"
                 min="1910"
                 max="2023"
                 step="1"
                 name="yob"
-                className="w-full p-2 border bg-white dark:bg-white dark:text-black"
+                className="tui-input"
               />
             </div>
             <div>
-              <label htmlFor="state" className="font-medium">State:</label>
-              <select name="state" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
+              <label htmlFor="state">State........:</label>
+              <select name="state" className="tui-input">
                 <option value=""></option>
                 {stateAbbreviations.map((option) => (
                   <option key={option} value={option}>
@@ -134,57 +129,35 @@ export default function MyForm() {
                 ))}
               </select>
             </div>
-            <section className="field-row">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-blue-500 p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
-              >
-                {loading ? "Loading..." : "Submit"}
-              </button>
-            </section>
-          </form>
-          {loading && <progress style={{width: "90%", marginLeft: "5%", marginTop: 10, marginBottom: 10}}/>}
-          <div className="status-bar">
-            <div className="status-bar-field">James McKay 2025</div>
-            <div className="status-bar-field">Click the ? for info</div>
-          </div>
-        </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="tui-button"
+              data-modal="modal"
+            >
+              {loading ? "Loading..." : "Submit"}
+            </button>
+          </fieldset>
+        </form>
       </div>
-
-      {/* MODAL */}
+      <div className="tui-overlap"></div>
       {showModal && (
-        <div 
-          className={`fixed inset-0 flex items-center justify-center
-            transition-all duration-300`}
-        >
-          <div className="window" style={help ? {}: {}}>
-            <div className="title-bar">
-              <div className="title-bar-text">{help ? "Data sourcing" : "Result"}</div>
-              <div className="title-bar-controls">
-                <button
-                  onClick={closeModal}
-                  aria-label = "Close">
-                </button>
-              </div>
-            </div>
-            {!help && (
-            <h2 className="dark:text-black" style={{margin:5}}>{result}</h2>
-            )}
-            {help && (
-              <div className="window-body">
-              <pre>
-              <p>This tool uses publicly available data</p>
-              <p>from the US Social Security Administration</p>
-              <p>as well as the Census Bureau. Last names</p>
-              <p>are from the 2010 census and first names</p>
-              <p>are by year from 1910 to 2023.</p>
-              </pre>
-              </div>
-            )}
+        <div className={`fixed inset-0 flex items-center justify-center backdrop-brightness-50`}>
+          <div className="tui-window red-168">
+            <fieldset className="tui-fieldset">
+              <legend className="red-255 yellow-255-text">{help ? "Data sourcing" : "Result"}</legend>
+              <h1 className="text-lg font-semibold mb-4 dark:text-black">{result}</h1>
+              <button className="tui-button right" data-modal="modal" onClick={closeModal}>close</button>
+            </fieldset>
           </div>
         </div>
       )}
-    </div>
+      <div className="tui-statusbar absolute cyan-168">
+        <ul>
+          <li><button className="white-255-text" onClick={handleHelp}>ABOUT</button></li>
+          <li><p>James McKay <strong>2025</strong></p></li>
+        </ul>
+      </div>
+    </body>
   );
 }
