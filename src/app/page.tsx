@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
+import "tuicss";
 
 export default function MyForm() {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [visible, setVisible] = useState(false); // Track visibility for animation
+  const [help, setHelp] = useState(false);
   const stateAbbreviations = [
     "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
     "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
@@ -34,8 +35,8 @@ export default function MyForm() {
         }
         const data = await res.json();
         setResult(data.firstName + " " + data.lastName);
+        setHelp(false);
         setShowModal(true);
-        setTimeout(() => setVisible(true), 10); // Allow animation to apply
         break;
       }
       catch (error)
@@ -58,8 +59,8 @@ export default function MyForm() {
           console.error("Error fetching data:", {res});
           setResult(`Error fetching data: ${error}. Try again?`);
         }
+        setHelp(false);
         setShowModal(true);
-        setTimeout(() => setVisible(true), 10);
         setLoading(false); 
         break;
       }
@@ -70,94 +71,93 @@ export default function MyForm() {
     }
   }
 
+  async function handleHelp() {
+    setResult(`This tool uses publicly available data from the US Social Security Administration as well as the Census Bureau. Last names are from the 2010 census and first names are by year from 1910 to 2023.`);
+    setHelp(true);
+    setShowModal(true);
+    setLoading(false);
+  }
+
   function closeModal() {
-    setVisible(false);
-    setTimeout(() => setShowModal(false), 300); // Delay unmounting to allow animation
+    setTimeout(() => setShowModal(false), 10); // Delay unmounting to allow animation
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-white-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96 dark:bg-gray-800 text-black dark:text-white">
-        <h2 className="text-xl font-semibold mb-4 text-center">Generate a name!</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="sex">Sex:</label>
-            <select name="sex" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
-              <option value=""></option>
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="race" className="block font-medium">Race:</label>
-            <select name="race" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
-              <option value=""></option>
-              <option value="white">White</option>
-              <option value="black">Black</option>
-              <option value="asian">Asian</option>
-              <option value="native">Native</option>
-              <option value="hispanic">Hispanic</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="yob" className="block font-medium">Year of Birth:</label>
-            <input
-              type="number"
-              min="1910"
-              max="2023"
-              step="1"
-              name="yob"
-              className="w-full p-2 border rounded-md dark:bg-white dark:text-black"
-            />
-          </div>
-          <div>
-            <label htmlFor="state" className="block font-medium">State:</label>
-            <select name="state" className="w-full p-2 border rounded-md dark:bg-white dark:text-black">
-              <option value=""></option>
-              {stateAbbreviations.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex justify-center">
+    <body className="center" style={{padding: "50px"}}>
+      <div className="tui-window">
+        <form onSubmit={handleSubmit}>
+          <fieldset className="tui-fieldset">
+            <legend className="center">CENSUS NAME GENERATOR</legend>
+            <div>
+              <label htmlFor="sex">Sex..........:</label>
+              <select className="tui-input" name="sex">
+                <option value=""></option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="race">Race.........:</label>
+              <select name="race" className="tui-input">
+                <option value=""></option>
+                <option value="white">White</option>
+                <option value="black">Black</option>
+                <option value="asian">Asian</option>
+                <option value="native">Native</option>
+                <option value="hispanic">Hispanic</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="yob">Year of Birth:</label>
+              <input
+                type="number"
+                min="1910"
+                max="2023"
+                step="1"
+                name="yob"
+                className="tui-input"
+              />
+            </div>
+            <div>
+              <label htmlFor="state">State........:</label>
+              <select name="state" className="tui-input">
+                <option value=""></option>
+                {stateAbbreviations.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+              className="tui-button"
+              data-modal="modal"
             >
               {loading ? "Loading..." : "Submit"}
             </button>
-          </div>
+          </fieldset>
         </form>
       </div>
-      {/* Footer Bar */}
-      <footer className="fixed bottom-0 w-full bg-gray-800 text-white text-sm p-4 text-center">
-        <p>This tool uses publicly available data from the US Social Security Administration as well as the Census Bureau. Last names are from the 2010 census and first names are by year from 1910 to 2023.</p>
-        <p>James McKay <strong>2025</strong></p>
-      </footer>
-
-      {/* MODAL */}
+      <div className="tui-overlap"></div>
       {showModal && (
-        <div 
-          className={`fixed inset-0 flex items-center justify-center backdrop-blur-sm 
-            transition-all duration-300`}
-        >
-          <div 
-            className={`bg-white p-6 rounded-lg shadow-lg w-80 transform transition-all duration-300 
-              ${visible ? "opacity-100 scale-100" : "opacity-0 scale-15"}`}
-          >
-            <h1 className="text-lg font-semibold mb-4 dark:text-black">{result}</h1>
-            <button
-              onClick={closeModal}
-              className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
-            >
-              Close
-            </button>
+        <div className={`fixed inset-0 flex items-center justify-center backdrop-brightness-50`}>
+          <div className="tui-window red-168">
+            <fieldset className="tui-fieldset">
+              <legend className="red-255 yellow-255-text">{help ? "Data sourcing" : "Result"}</legend>
+              <h1 className="text-lg font-semibold mb-4 dark:text-black">{result}</h1>
+              <button className="tui-button right" data-modal="modal" onClick={closeModal}>close</button>
+            </fieldset>
           </div>
         </div>
       )}
-    </div>
+      <div className="tui-statusbar absolute cyan-168">
+        <ul>
+          <li><button className="white-255-text" onClick={handleHelp}>ABOUT</button></li>
+          <li><p>James McKay <strong>2025</strong></p></li>
+        </ul>
+      </div>
+    </body>
   );
 }
