@@ -1,2 +1,2 @@
-## Census name service - Retro windows style
+## Census name service - Retro style
 
