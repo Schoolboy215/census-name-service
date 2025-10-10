@@ -154,7 +154,7 @@ export default function MyForm() {
       )}
       <div className="tui-statusbar absolute cyan-168">
         <ul>
-          <li><button className="white-255-text" onClick={handleHelp}>ABOUT</button></li>
+          <li><button className={`white-255-text ${showModal || loading ? ' disabled' : ''}`} disabled={showModal || loading} onClick={handleHelp}>ABOUT</button></li>
           <li><p>James McKay <strong>2025</strong></p></li>
         </ul>
       </div>
