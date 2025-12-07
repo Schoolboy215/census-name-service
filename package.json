@@ -11,11 +11,11 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "cross-env": "^7.0.3",
-    "next": "15.2.2",
+    "next": "^15.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tuicss": "^2.1.2",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "tuicss": "^2.1.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
