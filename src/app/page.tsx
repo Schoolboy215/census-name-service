@@ -12,6 +12,7 @@ export default function MyForm() {
     "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
     "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
   ];
+  const [percentileValue, setPercentileValue] = useState("100");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -88,47 +89,74 @@ export default function MyForm() {
         <form onSubmit={handleSubmit}>
           <fieldset className="tui-fieldset">
             <legend className="center">CENSUS NAME GENERATOR</legend>
-            <div>
-              <label htmlFor="sex">Sex..........:</label>
-              <select className="tui-input" name="sex">
-                <option value=""></option>
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="race">Race.........:</label>
-              <select name="race" className="tui-input">
-                <option value=""></option>
-                <option value="white">White</option>
-                <option value="black">Black</option>
-                <option value="asian">Asian</option>
-                <option value="native">Native</option>
-                <option value="hispanic">Hispanic</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="yob">Year of Birth:</label>
-              <input
-                type="number"
-                min="1910"
-                max="2023"
-                step="1"
-                name="yob"
-                className="tui-input"
-              />
-            </div>
-            <div>
-              <label htmlFor="state">State........:</label>
-              <select name="state" className="tui-input">
-                <option value=""></option>
-                {stateAbbreviations.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <fieldset className="tui-input-fieldset">
+              <legend>Demographics</legend>
+              <div>
+                <label htmlFor="sex">Sex..........:</label>
+                <select className="tui-input" name="sex">
+                  <option value=""></option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="race">Race.........:</label>
+                <select name="race" className="tui-input">
+                  <option value=""></option>
+                  <option value="white">White</option>
+                  <option value="black">Black</option>
+                  <option value="asian">Asian</option>
+                  <option value="native">Native</option>
+                  <option value="hispanic">Hispanic</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="yob">Year of Birth:</label>
+                <input
+                  type="number"
+                  min="1910"
+                  max="2023"
+                  step="1"
+                  name="yob"
+                  className="tui-input"
+                />
+              </div>
+              <div>
+                <label htmlFor="state">State........:</label>
+                <select name="state" className="tui-input">
+                  <option value=""></option>
+                  {stateAbbreviations.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </fieldset>
+            <fieldset className="tui-input-fieldset">
+              <legend>Rarity</legend>
+              <div>
+                <label htmlFor="top">Top/Bottom....:</label>
+                <select name="top" className="tui-input">
+                  <option value="true">Top</option>
+                  <option value="false">Bottom</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="percentile">Nth Percentile:</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  name="percentile"
+                  className="tui-input"
+                  value={percentileValue}
+                  onChange={e => setPercentileValue(e.target.value)}
+                />
+              </div>
+            </fieldset>
+            
             <button
               type="submit"
               disabled={loading}

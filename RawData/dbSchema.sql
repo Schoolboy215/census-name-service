@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.12
+-- Dumped from database version 15.15 (b7509d4)
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-03-21 11:10:48
+-- Started on 2025-12-19 09:22:49
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -30,11 +30,11 @@ CREATE SCHEMA "CENSUS_NAMES";
 ALTER SCHEMA "CENSUS_NAMES" OWNER TO neondb_owner;
 
 --
--- TOC entry 247 (class 1255 OID 90112)
--- Name: get_weighted_first_name(text, integer, text); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- TOC entry 248 (class 1255 OID 892928)
+-- Name: get_weighted_first_name(text, integer, text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
-CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text) RETURNS character varying
+CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -51,23 +51,23 @@ BEGIN
       name varchar(32),
       weight INT
     ) ON COMMIT DROP;
-    
+  
     IF (_sex IS NULL) AND (_yob IS NULL) AND (_state IS NULL) THEN                -- 0 0 0
-      v_sql := 'INSERT INTO my_temp (name, weight) SELECT name, sum("occurences") from "firstNames" GROUP BY name;';
+      v_sql := 'INSERT INTO my_temp (name, weight) SELECT name, sum("occurences") as total_occurences from "firstNames" GROUP BY name ORDER BY total_occurences DESC;';
     ELSIF (_sex IS NOT NULL) AND (_yob IS NULL) AND (_state IS NULL) THEN         -- 1 0 0
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE sex = ''%s'' GROUP BY name', _sex);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE sex = ''%s'' GROUP BY name ORDER BY total_occurences DESC', _sex);
     ELSIF (_sex IS NULL) AND (_yob IS NOT NULL) AND (_state IS NULL) THEN         -- 0 1 0
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE yob = %s GROUP BY name', _yob);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE yob = %s GROUP BY name ORDER BY total_occurences DESC', _yob);
     ELSIF (_sex IS NOT NULL) AND (_yob IS NOT NULL) AND (_STATE IS NULL) THEN     -- 1 1 0
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE sex = ''%s'' AND yob = %s GROUP BY name', _sex, _yob);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE sex = ''%s'' AND yob = %s GROUP BY name ORDER BY total_occurences DESC', _sex, _yob);
     ELSIF (_sex IS NULL) AND (_yob IS NULL) AND (_state IS NOT NULL) THEN         -- 0 0 1
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE state = ''%s'' GROUP BY name', _state);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE state = ''%s'' GROUP BY name ORDER BY total_occurences DESC', _state);
     ELSIF (_sex IS NOT NULL) AND (_yob IS NULL) AND (_state IS NOT NULL) THEN     -- 1 0 1
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE sex = ''%s'' AND state = ''%s'' GROUP BY name', _sex, _state);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE sex = ''%s'' AND state = ''%s'' GROUP BY name ORDER BY total_occurences DESC', _sex, _state);
     ELSIF (_sex IS NULL) AND (_yob IS NOT NULL) AND (_state IS NOT NULL) THEN     -- 0 1 1
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE yob = %s AND state = ''%s'' GROUP BY name', _yob, _state);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE yob = %s AND state = ''%s'' GROUP BY name ORDER BY total_occurences DESC', _yob, _state);
     ELSIF (_sex IS NOT NULL) AND (_yob IS NOT NULL) AND (_state IS NOT NULL) THEN -- 1 1 1
-      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) FROM "firstNames" WHERE sex = ''%s'' AND yob = %s AND state = ''%s'' GROUP BY name', _sex, _yob, _state);
+      v_sql := format('INSERT INTO my_temp (name, weight) SELECT name, sum(occurences) as total_occurences FROM "firstNames" WHERE sex = ''%s'' AND yob = %s AND state = ''%s'' GROUP BY name ORDER BY total_occurences DESC', _sex, _yob, _state);
     END IF;
 
     -- Execute the dynamic SQL
@@ -77,7 +77,11 @@ BEGIN
     SELECT SUM(weight) INTO total_weight FROM my_temp;
 
     -- Generate a random number between 0 and total_weight
-    SELECT FLOOR(random() * total_weight) INTO target_weight;
+    IF _top = TRUE THEN
+      SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
+    ELSE
+      SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
+    END IF;
 
     -- Iterate through the records and find the one matching the weighted random number
     FOR rec IN SELECT name, weight FROM my_temp LOOP
@@ -91,14 +95,14 @@ END;
 $$;
 
 
-ALTER FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text, _yob integer, _state text) OWNER TO neondb_owner;
+ALTER FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text, _yob integer, _state text, _percentile integer, _top boolean) OWNER TO neondb_owner;
 
 --
--- TOC entry 246 (class 1255 OID 81929)
--- Name: get_weighted_last_name(text); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- TOC entry 249 (class 1255 OID 910154)
+-- Name: get_weighted_last_name(text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
-CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text) RETURNS character varying
+CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -145,7 +149,11 @@ BEGIN
     SELECT SUM(weight) INTO total_weight FROM my_temp;
 
     -- Generate a random number between 0 and total_weight
-    SELECT FLOOR(random() * total_weight) INTO target_weight;
+    IF _top = TRUE THEN
+      SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
+    ELSE
+      SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
+    END IF;
 
     -- Iterate through the records and find the one matching the weighted random number
     FOR rec IN SELECT name, weight FROM my_temp LOOP
@@ -159,14 +167,14 @@ END;
 $$;
 
 
-ALTER FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text) OWNER TO neondb_owner;
+ALTER FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text, _percentile integer, _top boolean) OWNER TO neondb_owner;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- TOC entry 233 (class 1259 OID 32788)
+-- TOC entry 235 (class 1259 OID 32788)
 -- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
@@ -182,7 +190,7 @@ CREATE TABLE "CENSUS_NAMES"."firstNames" (
 ALTER TABLE "CENSUS_NAMES"."firstNames" OWNER TO neondb_owner;
 
 --
--- TOC entry 234 (class 1259 OID 32793)
+-- TOC entry 236 (class 1259 OID 32793)
 -- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
@@ -200,40 +208,23 @@ CREATE TABLE "CENSUS_NAMES"."lastNames" (
 ALTER TABLE "CENSUS_NAMES"."lastNames" OWNER TO neondb_owner;
 
 --
--- TOC entry 3201 (class 1259 OID 327729)
+-- TOC entry 3202 (class 1259 OID 327779)
+-- Name: fnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
+--
+
+CREATE INDEX fnsearch_idx ON "CENSUS_NAMES"."firstNames" USING btree (state, sex, yob);
+
+
+--
+-- TOC entry 3203 (class 1259 OID 327729)
 -- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE INDEX lnsearch_idx ON "CENSUS_NAMES"."lastNames" USING btree (name, occurences, "pctWhite", "pctBlack", "pctApi", "pctAian", "pctHispanic");
 
 
---
--- TOC entry 3200 (class 1259 OID 327680)
--- Name: search_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
---
-
-CREATE INDEX fnsearch_idx ON "CENSUS_NAMES"."firstNames" USING btree (sex, yob, state);
-
-
---
--- TOC entry 2060 (class 826 OID 16389)
--- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT ALL ON SEQUENCES TO neon_superuser WITH GRANT OPTION;
-
-
---
--- TOC entry 2059 (class 826 OID 16388)
--- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO neon_superuser WITH GRANT OPTION;
-
-
--- Completed on 2025-03-21 11:10:50
+-- Completed on 2025-12-19 09:22:51
 
 --
 -- PostgreSQL database dump complete
 --
-

@@ -22,7 +22,20 @@ export async function POST(request: NextRequest)
         return NextResponse.json({error:'race must be one of the following values: [white, black, asian, native, hispanic]'}, {status: 400});
       }
     }
-    const randomName = await getRandomLastName(data.race.toString())
+    if (Number(data.percentile) < 1 || Number(data.percentile) > 100)
+    {
+      return NextResponse.json({error:'percentile must be a number between 1 and 100, inclusive'}, {status: 400});
+    }
+    data.top = String(data.top).toLowerCase()
+    if (data.top == null)
+    {
+      data.top = "true"
+    }
+    if (data.top != "true" && data.top != "false")
+    {
+      return NextResponse.json({error:'top must be a string, true or false'}, {status: 400});
+    }
+    const randomName = await getRandomLastName(data.race.toString(), Number(data.percentile), data.top == "true" ? true : false)
     return NextResponse.json(randomName);
   }
   else
