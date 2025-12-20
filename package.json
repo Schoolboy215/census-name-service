@@ -15,7 +15,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4",
-    "tuicss": "^2.1.2"
+    "tuicss": "^2.1.2",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

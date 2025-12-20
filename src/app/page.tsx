@@ -2,16 +2,13 @@
 import { useState } from "react";
 import "tuicss";
 
+import {stateList} from './api/constants';
+
 export default function MyForm() {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [help, setHelp] = useState(false);
-  const stateAbbreviations = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
-    "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
-    "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-  ];
   const [percentileValue, setPercentileValue] = useState("100");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -125,7 +122,7 @@ export default function MyForm() {
                 <label htmlFor="state">State........:</label>
                 <select name="state" className="tui-input">
                   <option value=""></option>
-                  {stateAbbreviations.map((option) => (
+                  {stateList.map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>
