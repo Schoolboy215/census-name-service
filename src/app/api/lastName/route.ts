@@ -34,6 +34,6 @@ export async function POST(request: NextRequest)
   {
     data.race = ""
   }
-  const randomName = await getRandomLastName(data.race.toString(), Number(data.percentile), data.top == "true" ? true : false)
+  const randomName = await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
   return NextResponse.json(randomName);
 }

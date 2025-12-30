@@ -44,6 +44,6 @@ export async function POST(request: NextRequest)
     data.top = "true";
   }
 
-  const randomName = await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), Number(data.percentile), data.top == "true" ? true : false)
+  const randomName = await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
   return NextResponse.json(randomName);
 }

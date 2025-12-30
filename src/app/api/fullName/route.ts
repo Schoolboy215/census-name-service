@@ -53,8 +53,8 @@ export async function POST(request: NextRequest)
   }
 
   const [randomFirstName, randomLastName] = await Promise.all([
-    await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), Number(data.percentile), data.top == "true" ? true : false),
-    await getRandomLastName(data.race.toString(), Number(data.percentile), data.top == "true" ? true : false)
+    await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false),
+    await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
   ]);
   return NextResponse.json({firstName : randomFirstName.firstName, lastName : randomLastName.lastName});
 }
