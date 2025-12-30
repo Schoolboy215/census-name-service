@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm'
 import html from 'remark-html';
 import fs from 'fs';
 import path from 'path';
-const matter = require('gray-matter');
+import matter from 'gray-matter';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
