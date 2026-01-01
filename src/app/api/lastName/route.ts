@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getRandomLastName } from "../../db";
 import { z } from 'zod';
-import { schema } from '../jsonSchema';
+import { lastNameSchema } from '../schemas';
  
 export async function POST(request: NextRequest)
 {
@@ -18,12 +18,12 @@ export async function POST(request: NextRequest)
   else if (contentType?.includes("application/json"))
   {
     const body = await request.json();
-    const result = schema.safeParse(body);
+    const result = lastNameSchema.safeParse(body);
     if (!result.success)
     {
       return NextResponse.json(z.treeifyError(result.error), { status: 400 });
     }
-    data = schema.parse(body);
+    data = lastNameSchema.parse(body);
   }
   else
   {

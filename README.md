@@ -26,10 +26,24 @@ POSTGRES_USER=""
 No matter where you're hosting, you can create the tables in your database by using the schema backup located
 [here](RawData/dbSchema.sql)
 
+If you change the schemas or routes in `/src/app/api/schemas.ts` or `/src/app/api/generateOpenAPI.ts`, you'll need to regenerate the OpenAPI yaml and html.
+Either run these commands:
+
+```
+node ./src/app/api/generateOpenAPI.ts
+npx openapi-generate-html -i ./public/openapi-docs.yml -o ./public/openapi-docs.html --ui=redoc --theme=dark
+```
+Or execute the shell script
+`sh generateDocumentation.sh`
+
 ## Usage
 
 Use the retro-styled frontend
 [here](https://census-names.mckay.me)
 
 API documentation
-[here](public/api_documentation.md)
+[here](public/openapi-docs.html)
+
+## Notes about API
+## Percentile and top
+Percentile represents how much of the distribution to use, and top represents whether this distribution is at the most common end (true) or least common end (false). To put it into simple terms with an example, requesting `top="true", percentile=20` is equivalent to asking for a name that is in the top 20% most common names.

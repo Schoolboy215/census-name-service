@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Census names
+  description: API that generates realistic American names from public census
+    bureau and social security administration data
+servers:
+  - url: v1
+components:
+  schemas: {}
+  parameters: {}
+paths:
+  /api/firstName:
+    post:
+      description: Get a random first name with optional filters for sex, year of
+        birth, and state as well as rarity.
+      summary: Get a random first name.
+      requestBody:
+        description: Optional filters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sex:
+                  type: string
+                  enum:
+                    - M
+                    - F
+                  example: M
+                yob:
+                  type: number
+                  minimum: 1910
+                  maximum: 2023
+                  example: 1970
+                state:
+                  type: string
+                  enum:
+                    - AL
+                    - AK
+                    - AZ
+                    - AR
+                    - CA
+                    - CO
+                    - CT
+                    - DE
+                    - DC
+                    - FL
+                    - GA
+                    - HI
+                    - ID
+                    - IL
+                    - IN
+                    - IA
+                    - KS
+                    - KY
+                    - LA
+                    - ME
+                    - MD
+                    - MA
+                    - MI
+                    - MN
+                    - MS
+                    - MO
+                    - MT
+                    - NE
+                    - NV
+                    - NH
+                    - NJ
+                    - NM
+                    - NY
+                    - NC
+                    - ND
+                    - OH
+                    - OK
+                    - OR
+                    - PA
+                    - RI
+                    - SC
+                    - SD
+                    - TN
+                    - TX
+                    - UT
+                    - VT
+                    - VA
+                    - WA
+                    - WV
+                    - WI
+                    - WY
+                  example: OK
+                percentile:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                top:
+                  type: string
+                  enum:
+                    - "true"
+                    - "false"
+      responses:
+        "200":
+          description: Object with name information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: MARK
+                required:
+                  - firstName
+  /api/lastName:
+    post:
+      description: Get a random last name with optional filters for race and rarity.
+      summary: Get a random last name.
+      requestBody:
+        description: Optional filters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                race:
+                  type: string
+                  enum:
+                    - white
+                    - black
+                    - asian
+                    - native
+                    - hispanic
+                  example: white
+                percentile:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                top:
+                  type: string
+                  enum:
+                    - "true"
+                    - "false"
+      responses:
+        "200":
+          description: Object with name information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lastName:
+                    type: string
+                    example: SMITH
+                required:
+                  - lastName
+  /api/fullName:
+    post:
+      description: Get a random full name with optional filters for sex, year of
+        birth, state, and race as well as rarity.
+      summary: Get a random full name.
+      requestBody:
+        description: Optional filters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sex:
+                  type: string
+                  enum:
+                    - M
+                    - F
+                  example: M
+                yob:
+                  type: number
+                  minimum: 1910
+                  maximum: 2023
+                  example: "1970"
+                state:
+                  type: string
+                  enum:
+                    - AL
+                    - AK
+                    - AZ
+                    - AR
+                    - CA
+                    - CO
+                    - CT
+                    - DE
+                    - DC
+                    - FL
+                    - GA
+                    - HI
+                    - ID
+                    - IL
+                    - IN
+                    - IA
+                    - KS
+                    - KY
+                    - LA
+                    - ME
+                    - MD
+                    - MA
+                    - MI
+                    - MN
+                    - MS
+                    - MO
+                    - MT
+                    - NE
+                    - NV
+                    - NH
+                    - NJ
+                    - NM
+                    - NY
+                    - NC
+                    - ND
+                    - OH
+                    - OK
+                    - OR
+                    - PA
+                    - RI
+                    - SC
+                    - SD
+                    - TN
+                    - TX
+                    - UT
+                    - VT
+                    - VA
+                    - WA
+                    - WV
+                    - WI
+                    - WY
+                  example: OK
+                race:
+                  type: string
+                  enum:
+                    - white
+                    - black
+                    - asian
+                    - native
+                    - hispanic
+                  example: white
+                percentile:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                top:
+                  type: string
+                  enum:
+                    - "true"
+                    - "false"
+      responses:
+        "200":
+          description: Object with name information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: MARK
+                  lastName:
+                    type: string
+                    example: SMITH
+                required:
+                  - firstName
+                  - lastName
