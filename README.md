@@ -42,7 +42,7 @@ Use the retro-styled frontend
 [here](https://census-names.mckay.me)
 
 API documentation
-[here](public/openapi-docs.html)
+[here](https://census-names.mckay.me/openapi-docs.html)
 
 ## Notes about API
 ## Percentile and top
