@@ -20,6 +20,12 @@ registry.registerPath({
       content: {
         'application/json' : {
           schema: firstNameSchema
+        },
+        'multipart/form-data' : {
+          schema: firstNameSchema
+        },
+        'application/x-www-form-urlencoded' : {
+          schema: firstNameSchema
         }
       }
     }
@@ -30,7 +36,7 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: firstNameResponse
-        },
+        }
       },
     }
   },
@@ -47,6 +53,12 @@ registry.registerPath({
       content: {
         'application/json' : {
           schema: lastNameSchema
+        },
+        'multipart/form-data' : {
+          schema: lastNameSchema
+        },
+        'application/x-www-form-urlencoded' : {
+          schema: lastNameSchema
         }
       }
     }
@@ -57,7 +69,7 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: lastNameResponse
-        },
+        }
       },
     }
   },
@@ -74,6 +86,12 @@ registry.registerPath({
       content: {
         'application/json' : {
           schema: fullNameSchema
+        },
+        'multipart/form-data' : {
+          schema: fullNameSchema
+        },
+        'application/x-www-form-urlencoded' : {
+          schema: fullNameSchema
         }
       }
     }
@@ -84,7 +102,7 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: fullNameResponse
-        },
+        }
       },
     }
   },
