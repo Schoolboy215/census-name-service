@@ -19,7 +19,6 @@ export const getRandomLastName = async(_race : string = "", _percentile : number
 }
 
 export const confirmAPIKey = async(request: NextRequest, increment: boolean = false) => {
-  let validKey: boolean = false;
   if (request.headers.get('sec-fetch-site') != 'same-origin')
   {
     if (request.headers.get('x-api-key'))

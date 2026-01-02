@@ -3,8 +3,8 @@ import type { NextRequest } from 'next/server'
 import { confirmAPIKey } from './app/db'
  
 export async function middleware(request: NextRequest) {
-  let validKey : Number = 0;
-  let returnMessage: String = '';
+  let validKey : number = 0;
+  let returnMessage: string = '';
   if (process.env.REQUIRE_API_KEYS == "true")
   {
     if (request.headers.get('sec-fetch-site') != 'same-origin')
