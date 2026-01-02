@@ -18,7 +18,7 @@ export const getRandomLastName = async(_race : string = "", _percentile : number
   return {lastName : response[0].get_weighted_last_name.toString().toUpperCase()}
 }
 
-export const confirmAPIKey = async(request: NextRequest, increment: Boolean = false, _minSecondsBetween: Number = 0) => {
+export const confirmAPIKey = async(request: NextRequest, increment: boolean = false) => {
   let validKey: boolean = false;
   if (request.headers.get('sec-fetch-site') != 'same-origin')
   {
