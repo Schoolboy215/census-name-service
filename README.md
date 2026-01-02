@@ -6,6 +6,8 @@ This service sources from the Social Security Administration and US Census Burea
 ## Hosting yourself
 This service was originally written for vercel with a neonDB postgresql database. If you want to host a different way, you'll need to make an `.env.local` file with the following values filled in
 ```
+REQUIRE_API_KEYS=""
+MIN_SECONDS_BETWEEN_REQUESTS = ""
 DATABASE_URL=""
 DATABASE_URL_UNPOOLED=""
 PGDATABASE=""
@@ -22,6 +24,10 @@ POSTGRES_URL_NON_POOLING=""
 POSTGRES_URL_NO_SSL=""
 POSTGRES_USER=""
 ```
+
+`REQUIRE_API_KEYS` should be "true" if you want to validate keys for requests to any /api endpoint when not coming from the web frontend.
+
+`MIN_SECONDS_BETWEEN_REQUEST` should the number of seconds that a key must wait between requests. For example `"1"` means users can request once per second. `"0.1"` would mean they could request every 100 ms.
 
 No matter where you're hosting, you can create the tables in your database by using the schema backup located
 [here](RawData/dbSchema.sql)
