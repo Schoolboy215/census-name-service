@@ -5,7 +5,7 @@ import { confirmAPIKey } from './app/db'
 export async function middleware(request: NextRequest) {
   let validKey : number = 0;
   let returnMessage: string = '';
-  if (process.env.REQUIRE_API_KEYS == "true")
+  if (process.env.REQUIRE_API_KEYS == "true" && request.method == "POST")
   {
     if (request.headers.get('sec-fetch-site') != 'same-origin')
     {

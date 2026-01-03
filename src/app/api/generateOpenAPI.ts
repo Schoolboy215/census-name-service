@@ -9,11 +9,18 @@ extendZodWithOpenApi(z);
 
 const registry = new OpenAPIRegistry();
 
+const apiKeyHeader = registry.registerComponent('securitySchemes', 'ApiKeyAuth', {
+  type: 'apiKey',
+  in: "header",
+  name: "x-api-key",
+});
+
 registry.registerPath({
   method: 'post',
   path: '/api/firstName',
   description: 'Get a random first name with optional filters for sex, year of birth, and state as well as rarity.',
   summary: 'Get a random first name.',
+  security: [{ ApiKeyAuth: [] }],
   request: {
     body: {
       description: 'Optional filters',
@@ -47,6 +54,7 @@ registry.registerPath({
   path: '/api/lastName',
   description: 'Get a random last name with optional filters for race and rarity.',
   summary: 'Get a random last name.',
+  security: [{ ApiKeyAuth: [] }],
   request: {
     body: {
       description: 'Optional filters',
@@ -80,6 +88,7 @@ registry.registerPath({
   path: '/api/fullName',
   description: 'Get a random full name with optional filters for sex, year of birth, state, and race as well as rarity.',
   summary: 'Get a random full name.',
+  security: [{ ApiKeyAuth: [] }],
   request: {
     body: {
       description: 'Optional filters',

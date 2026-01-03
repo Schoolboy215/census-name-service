@@ -5,6 +5,11 @@ info:
   description: API that generates realistic American names from public census
     bureau and social security administration data
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
   schemas: {}
   parameters: {}
 paths:
@@ -13,6 +18,8 @@ paths:
       description: Get a random first name with optional filters for sex, year of
         birth, and state as well as rarity.
       summary: Get a random first name.
+      security:
+        - ApiKeyAuth: []
       requestBody:
         description: Optional filters
         content:
@@ -270,6 +277,8 @@ paths:
     post:
       description: Get a random last name with optional filters for race and rarity.
       summary: Get a random last name.
+      security:
+        - ApiKeyAuth: []
       requestBody:
         description: Optional filters
         content:
@@ -357,6 +366,8 @@ paths:
       description: Get a random full name with optional filters for sex, year of
         birth, state, and race as well as rarity.
       summary: Get a random full name.
+      security:
+        - ApiKeyAuth: []
       requestBody:
         description: Optional filters
         content:
