@@ -9,7 +9,7 @@ extendZodWithOpenApi(z);
 
 const registry = new OpenAPIRegistry();
 
-const apiKeyHeader = registry.registerComponent('securitySchemes', 'ApiKeyAuth', {
+registry.registerComponent('securitySchemes', 'ApiKeyAuth', {
   type: 'apiKey',
   in: "header",
   name: "x-api-key",
