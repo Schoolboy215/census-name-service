@@ -24,6 +24,3 @@ fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
 fn render(frame: &mut Frame) {
     frame.render_widget("hello world", frame.area());
 }
-
-// let conn = SqliteConnection::connect("postgres://neondb_owner:npg_waFLBphG18Zk@ep-steep-cloud-a6qn2pmg-pooler.us-west-2.aws.neon.tech/neondb?sslmode=require").await?;
-// sqlx::query("SELECT * FROM CENSUS_NAMES.apiKeys").execute(&mut conn).await?;
