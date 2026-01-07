@@ -1,0 +1,14 @@
+/home/james/Documents/GitHub/census-name-service/key_manager/target/debug/deps/thiserror-43a26905de5c1d3f.d: /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/james/Documents/GitHub/census-name-service/key_manager/target/debug/build/thiserror-8d9485f38595e92d/out/private.rs
+
+/home/james/Documents/GitHub/census-name-service/key_manager/target/debug/deps/libthiserror-43a26905de5c1d3f.rlib: /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/james/Documents/GitHub/census-name-service/key_manager/target/debug/build/thiserror-8d9485f38595e92d/out/private.rs
+
+/home/james/Documents/GitHub/census-name-service/key_manager/target/debug/deps/libthiserror-43a26905de5c1d3f.rmeta: /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/james/Documents/GitHub/census-name-service/key_manager/target/debug/build/thiserror-8d9485f38595e92d/out/private.rs
+
+/home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs:
+/home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs:
+/home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs:
+/home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs:
+/home/james/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs:
+/home/james/Documents/GitHub/census-name-service/key_manager/target/debug/build/thiserror-8d9485f38595e92d/out/private.rs:
+
+# env-dep:OUT_DIR=/home/james/Documents/GitHub/census-name-service/key_manager/target/debug/build/thiserror-8d9485f38595e92d/out
