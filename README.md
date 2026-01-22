@@ -32,15 +32,12 @@ POSTGRES_USER=""
 No matter where you're hosting, you can create the tables in your database by using the schema backup located
 [here](RawData/dbSchema.sql)
 
-If you change the schemas or routes in `/src/app/api/schemas.ts` or `/src/app/api/generateOpenAPI.ts`, you'll need to regenerate the OpenAPI yaml and html.
-Either run these commands:
+If you change the schemas or routes in `/src/app/api/schemas.ts` or `/src/app/api/generateOpenAPI.ts`, you'll need to regenerate the OpenAPI yaml and html. If using github, the action defined in `.github/workflows/build-documentation.yml` should automatically generate these files and commit them for you.
 
+If you need to generate them locally a different way, try the shell script
+```base
+sh generateDocumentation.sh
 ```
-node ./src/app/api/generateOpenAPI.ts
-npx @redocly/cli@latest build-docs ./public/openapi-docs.yml --output=./public/openapi-docs.html
-```
-Or execute the shell script
-`sh generateDocumentation.sh`
 
 ## Usage
 
