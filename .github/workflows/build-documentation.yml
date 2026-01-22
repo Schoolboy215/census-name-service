@@ -1,0 +1,34 @@
+name: Build and commit documentation if changed
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/app/api/constants.ts'
+      - 'src/app/api/schemas.ts'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Generate openapi-docs.yml
+        run: npx tsx ./src/app/api/generateOpenAPI.ts
+
+      - name: Generate html from openapi-docs
+        run: npx @redocly/cli@latest build-docs ./public/openapi-docs.yml --output=./public/openapi-docs.html
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: Check in generated documentaion
