@@ -92,7 +92,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 percentile:
                   type: integer
@@ -172,7 +171,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 percentile:
                   type: integer
@@ -252,7 +250,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 percentile:
                   type: integer
@@ -443,7 +440,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 race:
                   type: string
@@ -532,7 +528,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 race:
                   type: string
@@ -621,7 +616,6 @@ paths:
                     - WV
                     - WI
                     - WY
-                    - ZZ
                   example: OK
                 race:
                   type: string
