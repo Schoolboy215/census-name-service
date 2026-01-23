@@ -34,10 +34,15 @@ No matter where you're hosting, you can create the tables in your database by us
 
 If you change the schemas or routes in `/src/app/api/schemas.ts` or `/src/app/api/generateOpenAPI.ts`, you'll need to regenerate the OpenAPI yaml and html. If using github, the action defined in `.github/workflows/build-documentation.yml` should automatically generate these files and commit them for you.
 
-If you need to generate them locally a different way, try the shell script
-```base
-sh generateDocumentation.sh
-```
+If you need to generate them locally a different way, try either:
+1. Taskfile
+    ```bash
+    task documentation
+    ```
+2. Shell script
+    ```bash
+    sh generateDocumentation.sh
+    ```
 
 ## Usage
 

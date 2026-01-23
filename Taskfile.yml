@@ -1,0 +1,24 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: documentation
+      
+  documentation:
+    desc: Creates yml and html in one step
+    cmds:
+      - task: yaml
+      - task: html
+
+  yaml:
+    desc: Create OpenAPI yaml from zod spec
+    cmds:
+      - npx tsx ./src/app/api/generateOpenAPI.ts
+
+  html:
+    desc: Create html page for the OpenAPI yaml
+    cmds:
+      - npx @redocly/cli@latest build-docs ./public/openapi-docs.yml --output=./public/openapi-docs.html

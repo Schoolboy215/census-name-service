@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -23,11 +24,13 @@ jobs:
           cache: 'npm'
       - run: npm install
 
-      - name: Generate openapi-docs.yml
-        run: npx tsx ./src/app/api/generateOpenAPI.ts
-
-      - name: Generate html from openapi-docs
-        run: npx @redocly/cli@latest build-docs ./public/openapi-docs.yml --output=./public/openapi-docs.html
+      - name: Setup go-task
+        uses: pnorton5432/setup-task@v1
+        with:
+          task-version: 3.39.2
+          
+      - name: Build documentation
+        run: task documentation
 
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
