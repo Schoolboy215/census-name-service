@@ -2,10 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.15 (b7509d4)
+-- Dumped from database version 15.15 (2933c9e)
 -- Dumped by pg_dump version 17.4
-
--- Started on 2025-12-19 09:22:49
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,18 +18,60 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 6 (class 2615 OID 24576)
--- Name: CENSUS_NAMES; Type: SCHEMA; Schema: -; Owner: neondb_owner
+-- Name: CENSUS_NAMES; Type: SCHEMA; Schema: -; Owner: -
 --
 
 CREATE SCHEMA "CENSUS_NAMES";
 
 
-ALTER SCHEMA "CENSUS_NAMES" OWNER TO neondb_owner;
+--
+-- Name: check_api_key(uuid, boolean, numeric); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
+--
+
+CREATE FUNCTION "CENSUS_NAMES".check_api_key(_key uuid, _increment boolean DEFAULT false, _secondsallowed numeric DEFAULT 0) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+-- 0 : No key
+-- 1 : Valid key, valid use
+-- 2 : Valid key, used too recently
+DECLARE
+    rec                 RECORD := NULL;
+    curTime             TIMESTAMP;
+    v_sql               text;
+    ret                 INTEGER := 0;
+    timeSinceLastUse    INTERVAL;
+BEGIN
+    SET search_path TO "CENSUS_NAMES";
+    
+    SELECT * into rec FROM "apiKeys" WHERE key = _key;
+
+    IF rec is NULL THEN
+        ret :=0;
+    ELSE
+        IF _secondsAllowed != 0 THEN
+            SELECT CURRENT_TIMESTAMP into curTime;
+            timeSinceLastUse := CURRENT_TIMESTAMP - rec."lastUse";
+            IF EXTRACT(EPOCH FROM timeSinceLastUse) < _secondsAllowed THEN
+                ret := 2;
+            ELSE
+                ret := 1;
+            END IF;
+        ELSE
+            ret := 1;
+        END IF;
+    END IF;
+
+    IF _increment AND ret = 1 THEN
+        UPDATE "apiKeys" set "lastUse" = CURRENT_TIMESTAMP, uses = rec.uses + 1 WHERE id = rec.id;
+    END IF;
+
+    RETURN ret;
+END;
+$$;
+
 
 --
--- TOC entry 248 (class 1255 OID 892928)
--- Name: get_weighted_first_name(text, integer, text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: get_weighted_first_name(text, integer, text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
@@ -95,11 +135,8 @@ END;
 $$;
 
 
-ALTER FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text, _yob integer, _state text, _percentile integer, _top boolean) OWNER TO neondb_owner;
-
 --
--- TOC entry 249 (class 1255 OID 910154)
--- Name: get_weighted_last_name(text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: get_weighted_last_name(text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
@@ -167,15 +204,40 @@ END;
 $$;
 
 
-ALTER FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text, _percentile integer, _top boolean) OWNER TO neondb_owner;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- TOC entry 235 (class 1259 OID 32788)
--- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: apiKeys; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
+--
+
+CREATE TABLE "CENSUS_NAMES"."apiKeys" (
+    id integer NOT NULL,
+    key uuid DEFAULT gen_random_uuid(),
+    email text NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    uses integer DEFAULT 0,
+    "lastUse" timestamp without time zone
+);
+
+
+--
+-- Name: apiKeys_id_seq; Type: SEQUENCE; Schema: CENSUS_NAMES; Owner: -
+--
+
+ALTER TABLE "CENSUS_NAMES"."apiKeys" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME "CENSUS_NAMES"."apiKeys_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE TABLE "CENSUS_NAMES"."firstNames" (
@@ -187,11 +249,8 @@ CREATE TABLE "CENSUS_NAMES"."firstNames" (
 );
 
 
-ALTER TABLE "CENSUS_NAMES"."firstNames" OWNER TO neondb_owner;
-
 --
--- TOC entry 236 (class 1259 OID 32793)
--- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE TABLE "CENSUS_NAMES"."lastNames" (
@@ -205,26 +264,45 @@ CREATE TABLE "CENSUS_NAMES"."lastNames" (
 );
 
 
-ALTER TABLE "CENSUS_NAMES"."lastNames" OWNER TO neondb_owner;
+--
+-- Name: apiKeys apiKeys_email_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+--
+
+ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
+    ADD CONSTRAINT "apiKeys_email_key" UNIQUE (email);
+
 
 --
--- TOC entry 3202 (class 1259 OID 327779)
--- Name: fnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: apiKeys apiKeys_key_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+--
+
+ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
+    ADD CONSTRAINT "apiKeys_key_key" UNIQUE (key);
+
+
+--
+-- Name: apiKeys apiKeys_pkey; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+--
+
+ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
+    ADD CONSTRAINT "apiKeys_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: fnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE INDEX fnsearch_idx ON "CENSUS_NAMES"."firstNames" USING btree (state, sex, yob);
 
 
 --
--- TOC entry 3203 (class 1259 OID 327729)
--- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
+-- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: -
 --
 
 CREATE INDEX lnsearch_idx ON "CENSUS_NAMES"."lastNames" USING btree (name, occurences, "pctWhite", "pctBlack", "pctApi", "pctAian", "pctHispanic");
 
 
--- Completed on 2025-12-19 09:22:51
-
 --
 -- PostgreSQL database dump complete
 --
+
