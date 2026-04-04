@@ -18,23 +18,23 @@ export const getRandomLastName = async(_race : string = "", _percentile : number
   return {lastName : response[0].get_weighted_last_name.toString().toUpperCase()}
 }
 
+export const KEY_VALID = 1;
+export const KEY_INVALID = 0;
+export const KEY_RATE_LIMITED = 2;
+
 export const confirmAPIKey = async(request: NextRequest, increment: boolean = false) => {
-  if (request.headers.get('sec-fetch-site') != 'same-origin')
+  if (request.headers.get('x-api-key'))
   {
-    if (request.headers.get('x-api-key'))
+    const sql = neon(process.env.DATABASE_URL!);
+    try
     {
-      const sql = neon(process.env.DATABASE_URL!);
-      try
-      {
-        const response = await sql('SELECT "CENSUS_NAMES".check_api_key(_key => $1, _increment => $2, _secondsAllowed => $3);', [request.headers.get('x-api-key'), increment, process.env.MIN_SECONDS_BETWEEN_REQUESTS]);
-        return response[0]['check_api_key'];
-      }
-      catch
-      {
-        return 0;
-      }
+      const response = await sql('SELECT "CENSUS_NAMES".check_api_key(_key => $1, _increment => $2, _secondsAllowed => $3);', [request.headers.get('x-api-key'), increment, process.env.MIN_SECONDS_BETWEEN_REQUESTS]);
+      return response[0]['check_api_key'];
     }
-    return 0;
+    catch
+    {
+      return KEY_INVALID;
+    }
   }
-  return 1;
+  return KEY_INVALID;
 }
