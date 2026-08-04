@@ -31,7 +31,8 @@ export default function MyForm() {
         {
           throw new Error("Timeout");
         }
-        const data = await res.json();
+        let data = await res.json();
+        data = data.pop(); // /fullName returns an array now, so we just take the first one
         setResult(data.firstName + " " + data.lastName);
         setHelp(false);
         setShowModal(true);

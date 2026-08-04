@@ -107,7 +107,7 @@ registry.registerPath({
   },
   responses: {
     200: {
-      description: 'Object with name information.',
+      description: 'Object with name information. Note that results are returned in an array even if there is only one element',
       content: {
         'application/json': {
           schema: fullNameResponse

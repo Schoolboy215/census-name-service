@@ -31,7 +31,7 @@ export async function POST(request: NextRequest)
       await getRandomFirstName(),
       await getRandomLastName()
     ]);
-    return NextResponse.json({firstName : randomFirstName.firstName, lastName : randomLastName.lastName});
+    return NextResponse.json([{firstName : randomFirstName.firstName, lastName : randomLastName.lastName}]);
   }
 
   if (data.race == null)
@@ -51,10 +51,20 @@ export async function POST(request: NextRequest)
   {
     data.top = "true"
   }
+  if (data.quantity == null)
+  {
+    data.quantity = 1
+  }
 
-  const [randomFirstName, randomLastName] = await Promise.all([
-    await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false),
-    await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
-  ]);
-  return NextResponse.json({firstName : randomFirstName.firstName, lastName : randomLastName.lastName});
+  const nameList = [];
+  for (let i = 0; i < Number(data.quantity); i++)
+  {
+    const [randomFirstName, randomLastName] = await Promise.all([
+      await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false),
+      await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
+    ]);
+    nameList.push({firstName: randomFirstName.firstName, lastName: randomLastName.lastName});
+  }
+  
+  return NextResponse.json(nameList);
 }

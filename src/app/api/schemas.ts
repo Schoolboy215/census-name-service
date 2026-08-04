@@ -29,11 +29,15 @@ const fullNameSchema = z.object({
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
   percentile: z.int().min(1).max(100).optional(),
-  top: z.enum(boolList).optional()
+  top: z.enum(boolList).optional(),
+  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).default(1)
 });
-const fullNameResponse = z.object({
-  firstName: z.string().openapi({ example: 'MARK' }),
-  lastName: z.string().openapi({ example: 'SMITH' })
-});
+
+const fullNameResponse = z.array(
+  z.object({
+    firstName: z.string().openapi({ example: 'MARK' }),
+    lastName: z.string().openapi({ example: 'SMITH' })
+  })
+);
 
 export {firstNameSchema, firstNameResponse, lastNameSchema, lastNameResponse, fullNameSchema, fullNameResponse};
