@@ -52,6 +52,13 @@ Use the retro-styled frontend
 API documentation
 [here](https://census-names.mckay.me/openapi-docs.html)
 
+## API Key management
+A simple console app with a TUI is included in the repo. To build/run, go into /key_manager (requires Rust to be installed)
+
+```bash
+cargo run
+```
+
 ## Notes about API
 ## Percentile and top
 Percentile represents how much of the distribution to use, and top represents whether this distribution is at the most common end (true) or least common end (false). To put it into simple terms with an example, requesting `top="true", percentile=20` is equivalent to asking for a name that is in the top 20% most common names.
