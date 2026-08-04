@@ -7,8 +7,8 @@ const firstNameSchema = z.object({
   sex: z.enum(sexList).openapi({ example: 'M' }).optional(),
   yob: z.number().min(1910).max(2023).openapi({ example: 1970 }).optional(),
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
-  percentile: z.int().min(1).max(100).optional(),
-  top: z.enum(boolList).optional()
+  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional()
 });
 const firstNameResponse = z.object({
   firstName: z.string().openapi({ example: 'MARK' })
@@ -16,21 +16,22 @@ const firstNameResponse = z.object({
 
 const lastNameSchema = z.object({
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
-  percentile: z.int().min(1).max(100).optional(),
-  top: z.enum(boolList).optional()
+  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional()
 });
 const lastNameResponse = z.object({
   lastName: z.string().openapi({ example: 'SMITH' })
 });
 
+// The max value of quantity comes from an environment variable. This is set both in production and github for the pusposes of automatic doc building. Keep these in sync!
 const fullNameSchema = z.object({
   sex: z.enum(sexList).openapi({ example: 'M' }).optional(),
   yob: z.number().min(1910).max(2023).openapi({ example: '1970' }).optional(),
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
-  percentile: z.int().min(1).max(100).optional(),
-  top: z.enum(boolList).optional(),
-  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).default(1)
+  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
+  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
 
 const fullNameResponse = z.array(
@@ -40,4 +41,14 @@ const fullNameResponse = z.array(
   })
 );
 
-export {firstNameSchema, firstNameResponse, lastNameSchema, lastNameResponse, fullNameSchema, fullNameResponse};
+const throttledResponse = z.object({
+  success: z.literal(false),
+  message: z.literal("Key used too recently. Wait and try again.")
+});
+
+const missingKeyResponse = z.object({
+  success: z.literal(false),
+  message: z.literal("Invalid or missing API key. Email server administrator to request one if you need it.")
+});
+
+export {firstNameSchema, firstNameResponse, lastNameSchema, lastNameResponse, fullNameSchema, fullNameResponse, throttledResponse, missingKeyResponse};

@@ -31,6 +31,8 @@ jobs:
           
       - name: Build documentation
         run: task documentation
+        env:
+          MAX_NAMES_PER_REQUEST: ${{ vars.MAX_NAMES_PER_REQUEST }}
 
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
