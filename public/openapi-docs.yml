@@ -459,6 +459,11 @@ paths:
                   enum:
                     - "true"
                     - "false"
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 1
+                  default: 1
           multipart/form-data:
             schema:
               type: object
@@ -547,6 +552,11 @@ paths:
                   enum:
                     - "true"
                     - "false"
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 1
+                  default: 1
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -635,20 +645,28 @@ paths:
                   enum:
                     - "true"
                     - "false"
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 1
+                  default: 1
       responses:
         "200":
-          description: Object with name information.
+          description: Object with name information. Note that results are returned in an
+            array even if there is only one element
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  firstName:
-                    type: string
-                    example: MARK
-                  lastName:
-                    type: string
-                    example: SMITH
-                required:
-                  - firstName
-                  - lastName
+                type: array
+                items:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                      example: MARK
+                    lastName:
+                      type: string
+                      example: SMITH
+                  required:
+                    - firstName
+                    - lastName
