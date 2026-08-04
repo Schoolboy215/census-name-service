@@ -42,4 +42,4 @@ next-env.d.ts
 
 .vercel
 .env*.local
-key_manager/
+key_manager/target
