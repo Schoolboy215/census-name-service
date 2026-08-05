@@ -1,69 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { getRandomFirstName, getRandomLastName } from "../../db";
-import { z } from 'zod';
+import { parseFilterRequest } from '../parseFilterRequest';
 import { fullNameSchema } from '../schemas';
- 
+
 export async function POST(request: NextRequest)
 {
-  const headersList = headers();
-  const contentType = (await headersList).get("content-type");
-  let   data = null;
+  const parsed = await parseFilterRequest(request, fullNameSchema);
 
-  if (contentType?.includes("multipart/form-data") || contentType?.includes("application/x-www-form-urlencoded"))
+  if (parsed.kind === 'error')
   {
-    const formData = await request.formData();
-    data = Object.fromEntries(formData);
+    return parsed.response;
   }
-  else if (contentType?.includes("application/json"))
+  if (parsed.kind === 'empty')
   {
-    const body = await request.json();
-    const result = fullNameSchema.safeParse(body);
-    if (!result.success)
-    {
-      return NextResponse.json(z.treeifyError(result.error), { status: 400 });
-    }
-    data = fullNameSchema.parse(body);
-  }
-  else
-  {
-    const [randomFirstName, randomLastName] = await Promise.all([
-      await getRandomFirstName(),
-      await getRandomLastName()
-    ]);
-    return NextResponse.json([{firstName : randomFirstName[0].firstName, lastName : randomLastName[0].lastName}]);
-  }
-
-  if (data.race == null)
-  {
-    data.race = ""
-  }
-  if (data.state == null)
-  {
-    data.state = ""
-  }
-  if (data.sex == null)
-  {
-    data.sex = ""
-  }
-  data.top = String(data.top).toLowerCase()
-  if (data.top == null)
-  {
-    data.top = "true"
-  }
-  if (data.quantity == null)
-  {
-    data.quantity = 1
-  }
-
-
     const [randomFirstNames, randomLastNames] = await Promise.all([
-      await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false, Number(data.quantity)),
-      await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false, Number(data.quantity))
+      getRandomFirstName(),
+      getRandomLastName()
     ]);
+    return NextResponse.json([{firstName: randomFirstNames[0].firstName, lastName: randomLastNames[0].lastName}]);
+  }
 
-    const nameList = randomFirstNames.map((first, i) => ({firstName: first.firstName, lastName: randomLastNames[i].lastName}));
-    //nameList.push({firstName: randomFirstName.firstName, lastName: randomLastName.lastName});
-  
+  const data = parsed.data;
+  const top = data.top === undefined ? true : data.top === "true";
+
+  const [randomFirstNames, randomLastNames] = await Promise.all([
+    getRandomFirstName(data.sex, data.yob, data.state, data.percentile, top, data.quantity),
+    getRandomLastName(data.race, data.percentile, top, data.quantity)
+  ]);
+
+  const nameList = randomFirstNames.map((first, i) => ({firstName: first.firstName, lastName: randomLastNames[i].lastName}));
   return NextResponse.json(nameList);
 }

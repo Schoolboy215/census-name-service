@@ -3,13 +3,15 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { raceList, sexList, boolList, stateList } from './constants.ts';
 extendZodWithOpenApi(z);
 
+// Numeric fields use z.coerce so they validate the same way whether they arrive
+// as JSON numbers, or as strings from form-data / URL query parameters.
 const firstNameSchema = z.object({
   sex: z.enum(sexList).openapi({ example: 'M' }).optional(),
-  yob: z.number().min(1910).max(2023).openapi({ example: 1970 }).optional(),
+  yob: z.coerce.number().min(1910).max(2023).openapi({ example: 1970 }).optional(),
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
-  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  percentile: z.coerce.number().int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
   top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
-  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
+  quantity: z.coerce.number().int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
 const firstNameResponse = z.array(
   z.object({
@@ -19,9 +21,9 @@ const firstNameResponse = z.array(
 
 const lastNameSchema = z.object({
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
-  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  percentile: z.coerce.number().int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
   top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
-  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
+  quantity: z.coerce.number().int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
 const lastNameResponse = z.array(
   z.object({
@@ -32,12 +34,12 @@ const lastNameResponse = z.array(
 // The max value of quantity comes from an environment variable. This is set both in production and github for the pusposes of automatic doc building. Keep these in sync!
 const fullNameSchema = z.object({
   sex: z.enum(sexList).openapi({ example: 'M' }).optional(),
-  yob: z.number().min(1910).max(2023).openapi({ example: '1970' }).optional(),
+  yob: z.coerce.number().min(1910).max(2023).openapi({ example: '1970' }).optional(),
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
-  percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
+  percentile: z.coerce.number().int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
   top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
-  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
+  quantity: z.coerce.number().int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
 
 const fullNameResponse = z.array(
