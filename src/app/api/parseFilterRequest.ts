@@ -11,6 +11,10 @@ type ParsedFilterRequest<T> =
   | { kind: 'empty' } // No filters anywhere - caller should fall back to a fully random result.
   | { kind: 'error'; response: NextResponse };
 
+function omitEmptyStrings(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== ''));
+}
+
 export async function parseFilterRequest<T extends z.ZodTypeAny>(
   request: NextRequest,
   schema: T
@@ -22,7 +26,10 @@ export async function parseFilterRequest<T extends z.ZodTypeAny>(
 
   if (contentType?.includes('multipart/form-data') || contentType?.includes('application/x-www-form-urlencoded'))
   {
-    raw = Object.fromEntries(await request.formData());
+    // HTML forms submit every field, including untouched <select>s and empty
+    // number inputs, as an empty string - that means "not provided" here,
+    // not "explicitly set to an empty value", so drop those before validating.
+    raw = omitEmptyStrings(Object.fromEntries(await request.formData()));
   }
   else if (contentType?.includes('application/json'))
   {
@@ -30,7 +37,7 @@ export async function parseFilterRequest<T extends z.ZodTypeAny>(
   }
   else if ([...searchParams].length > 0)
   {
-    raw = Object.fromEntries(searchParams);
+    raw = omitEmptyStrings(Object.fromEntries(searchParams));
   }
   else
   {
