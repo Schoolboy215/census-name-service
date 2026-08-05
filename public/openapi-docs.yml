@@ -122,6 +122,13 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
           multipart/form-data:
             schema:
               type: object
@@ -206,6 +213,13 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -290,19 +304,28 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
       responses:
         "200":
           description: Object with name information.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  firstName:
-                    type: string
-                    example: MARK
-                required:
-                  - firstName
+                type: array
+                items:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                      example: MARK
+                  required:
+                    - firstName
         "401":
           description: Missing API key
           content:
@@ -377,6 +400,13 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
           multipart/form-data:
             schema:
               type: object
@@ -404,6 +434,13 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -431,19 +468,28 @@ paths:
                   description: true if the percentile should be on the common end, false if it
                     should be on the bottom. See "Percentile filtering" above
                     for more information
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 1
+                  description: How many names to return. Max value is determined by an environment
+                    variable.
       responses:
         "200":
           description: Object with name information.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  lastName:
-                    type: string
-                    example: SMITH
-                required:
-                  - lastName
+                type: array
+                items:
+                  type: object
+                  properties:
+                    lastName:
+                      type: string
+                      example: SMITH
+                  required:
+                    - lastName
         "401":
           description: Missing API key
           content:
