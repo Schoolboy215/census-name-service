@@ -31,7 +31,7 @@ export async function POST(request: NextRequest)
       await getRandomFirstName(),
       await getRandomLastName()
     ]);
-    return NextResponse.json([{firstName : randomFirstName.firstName, lastName : randomLastName.lastName}]);
+    return NextResponse.json([{firstName : randomFirstName[0].firstName, lastName : randomLastName[0].lastName}]);
   }
 
   if (data.race == null)
