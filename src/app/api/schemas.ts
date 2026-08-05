@@ -8,20 +8,26 @@ const firstNameSchema = z.object({
   yob: z.number().min(1910).max(2023).openapi({ example: 1970 }).optional(),
   state: z.enum(stateList).openapi({ example: 'OK' }).optional(),
   percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
-  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional()
+  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
+  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
-const firstNameResponse = z.object({
-  firstName: z.string().openapi({ example: 'MARK' })
-});
+const firstNameResponse = z.array(
+  z.object({
+    firstName: z.string().openapi({ example: 'MARK' })
+  })
+);
 
 const lastNameSchema = z.object({
   race: z.enum(raceList).openapi({ example: 'white' }).optional(),
   percentile: z.int().min(1).max(100).openapi({description: 'Rarity of the name, paired with top. See "Percentile filtering" above for more information'}).optional(),
-  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional()
+  top: z.enum(boolList).openapi({ description: 'true if the percentile should be on the common end, false if it should be on the bottom. See "Percentile filtering" above for more information'}).optional(),
+  quantity: z.int().min(1).max(process.env.MAX_NAMES_PER_REQUEST ? Number(process.env.MAX_NAMES_PER_REQUEST) : 1).openapi({ description: "How many names to return. Max value is determined by an environment variable."}).default(1)
 });
-const lastNameResponse = z.object({
-  lastName: z.string().openapi({ example: 'SMITH' })
-});
+const lastNameResponse = z.array(
+  z.object({
+    lastName: z.string().openapi({ example: 'SMITH' })
+  })
+);
 
 // The max value of quantity comes from an environment variable. This is set both in production and github for the pusposes of automatic doc building. Keep these in sync!
 const fullNameSchema = z.object({

@@ -74,24 +74,28 @@ $$;
 -- Name: get_weighted_first_name(text, integer, text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
 --
 
-CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
+CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true, _quantity integer DEFAULT 1) RETURNS SETOF character varying
     LANGUAGE plpgsql
     AS $$
 DECLARE
     total_weight INT;
     target_weight INT;
-    cumulative_weight INT := 0;
+    cumulative_weight INT;
     rec RECORD;
     v_sql text;
+    i INT;
+    picked_name character varying;
 BEGIN
     SET search_path TO "CENSUS_NAMES";
-    
-    -- Create a temp table with weights multiplied by the selected race
+
+    -- Create a temp table with weights multiplied by the selected race.
+    -- Built once per call and reused for every one of the _quantity picks below,
+    -- rather than being rebuilt on every invocation.
     CREATE TEMP TABLE IF NOT EXISTS my_temp(
       name varchar(32),
       weight INT
     ) ON COMMIT DROP;
-  
+
     IF (_sex IS NULL) AND (_yob IS NULL) AND (_state IS NULL) THEN                -- 0 0 0
       v_sql := 'INSERT INTO my_temp (name, weight) SELECT name, sum("occurences") as total_occurences from "firstNames" GROUP BY name ORDER BY total_occurences DESC;';
     ELSIF (_sex IS NOT NULL) AND (_yob IS NULL) AND (_state IS NULL) THEN         -- 1 0 0
@@ -112,25 +116,35 @@ BEGIN
 
     -- Execute the dynamic SQL
     EXECUTE v_sql;
-    
+
     -- Get the sum of all weights
     SELECT SUM(weight) INTO total_weight FROM my_temp;
 
-    -- Generate a random number between 0 and total_weight
-    IF _top = TRUE THEN
-      SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
-    ELSE
-      SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
-    END IF;
+    -- Perform _quantity independent weighted picks against the same temp table
+    FOR i IN 1.._quantity LOOP
+        cumulative_weight := 0;
+        picked_name := '';
 
-    -- Iterate through the records and find the one matching the weighted random number
-    FOR rec IN SELECT name, weight FROM my_temp LOOP
-        cumulative_weight := cumulative_weight + rec.weight;
-        IF cumulative_weight > target_weight THEN
-            RETURN rec.name;
+        -- Generate a random number between 0 and total_weight
+        IF _top = TRUE THEN
+          SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
+        ELSE
+          SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
         END IF;
+
+        -- Iterate through the records and find the one matching the weighted random number
+        FOR rec IN SELECT name, weight FROM my_temp LOOP
+            cumulative_weight := cumulative_weight + rec.weight;
+            IF cumulative_weight > target_weight THEN
+                picked_name := rec.name;
+                EXIT;
+            END IF;
+        END LOOP;
+
+        RETURN NEXT picked_name; -- '' if nothing found
     END LOOP;
-    RETURN ''; -- If nothing found
+
+    RETURN;
 END;
 $$;
 
@@ -139,19 +153,21 @@ $$;
 -- Name: get_weighted_last_name(text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
 --
 
-CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true) RETURNS character varying
+CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true, _quantity integer DEFAULT 1) RETURNS SETOF character varying
     LANGUAGE plpgsql
     AS $$
 DECLARE
     total_weight INT;
     target_weight INT;
-    cumulative_weight INT := 0;
+    cumulative_weight INT;
     rec RECORD;
     raceField text;
     v_sql text;
+    i INT;
+    picked_name character varying;
 BEGIN
     SET search_path TO "CENSUS_NAMES";
-    
+
     CASE _race
       WHEN 'white'    THEN raceField := 'pctWhite';
       WHEN 'black'    THEN raceField := 'pctBlack';
@@ -160,13 +176,15 @@ BEGIN
       WHEN 'hispanic' THEN raceField := 'pctHispanic';
       ELSE raceField := '';
     END CASE;
-    
-    -- Create a temp table with weights multiplied by the selected race
+
+    -- Create a temp table with weights multiplied by the selected race.
+    -- Built once per call and reused for every one of the _quantity picks below,
+    -- rather than being rebuilt on every invocation.
     CREATE TEMP TABLE IF NOT EXISTS my_temp(
       name varchar(32),
       weight INT
     ) ON COMMIT DROP;
-    
+
     IF _race IS NOT NULL THEN
       v_sql := format(
           'INSERT INTO my_temp (name, weight)
@@ -174,32 +192,42 @@ BEGIN
           raceField
       );
     ELSE
-      v_sql := 
+      v_sql :=
           'INSERT INTO my_temp (name, weight)
           SELECT name, occurences FROM "lastNames";';
     END IF;
 
     -- Execute the dynamic SQL
     EXECUTE v_sql;
-    
+
     -- Get the sum of all weights
     SELECT SUM(weight) INTO total_weight FROM my_temp;
 
-    -- Generate a random number between 0 and total_weight
-    IF _top = TRUE THEN
-      SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
-    ELSE
-      SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
-    END IF;
+    -- Perform _quantity independent weighted picks against the same temp table
+    FOR i IN 1.._quantity LOOP
+        cumulative_weight := 0;
+        picked_name := '';
 
-    -- Iterate through the records and find the one matching the weighted random number
-    FOR rec IN SELECT name, weight FROM my_temp LOOP
-        cumulative_weight := cumulative_weight + rec.weight;
-        IF cumulative_weight > target_weight THEN
-            RETURN rec.name;
+        -- Generate a random number between 0 and total_weight
+        IF _top = TRUE THEN
+          SELECT FLOOR(random() * total_weight * (_percentile / 100.0)) INTO target_weight;
+        ELSE
+          SELECT FLOOR(random() * total_weight * (_percentile / 100.0) + (total_weight * ((100 - _percentile) / 100.0))) INTO target_weight;
         END IF;
+
+        -- Iterate through the records and find the one matching the weighted random number
+        FOR rec IN SELECT name, weight FROM my_temp LOOP
+            cumulative_weight := cumulative_weight + rec.weight;
+            IF cumulative_weight > target_weight THEN
+                picked_name := rec.name;
+                EXIT;
+            END IF;
+        END LOOP;
+
+        RETURN NEXT picked_name; -- '' if nothing found in results
     END LOOP;
-    RETURN ''; -- If nothing found in results
+
+    RETURN;
 END;
 $$;
 

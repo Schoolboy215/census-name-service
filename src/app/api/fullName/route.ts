@@ -56,15 +56,14 @@ export async function POST(request: NextRequest)
     data.quantity = 1
   }
 
-  const nameList = [];
-  for (let i = 0; i < Number(data.quantity); i++)
-  {
-    const [randomFirstName, randomLastName] = await Promise.all([
-      await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false),
-      await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
+
+    const [randomFirstNames, randomLastNames] = await Promise.all([
+      await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false, Number(data.quantity)),
+      await getRandomLastName(data.race.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false, Number(data.quantity))
     ]);
-    nameList.push({firstName: randomFirstName.firstName, lastName: randomLastName.lastName});
-  }
+
+    const nameList = randomFirstNames.map((first, i) => ({firstName: first.firstName, lastName: randomLastNames[i].lastName}));
+    //nameList.push({firstName: randomFirstName.firstName, lastName: randomLastName.lastName});
   
   return NextResponse.json(nameList);
 }

@@ -43,7 +43,11 @@ export async function POST(request: NextRequest)
   {
     data.top = "true";
   }
+  if (data.quantity == null)
+  {
+    data.quantity = 1
+  }
 
-  const randomName = await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false)
-  return NextResponse.json(randomName);
+  const randomNames = await getRandomFirstName(data.sex.toString(), Number(data.yob), data.state.toString(), data.percentile ? Number(data.percentile) : undefined, data.top == "true" ? true : false, Number(data.quantity));
+  return NextResponse.json(randomNames);
 }
