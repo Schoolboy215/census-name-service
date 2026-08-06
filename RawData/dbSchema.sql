@@ -2,8 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.15 (2933c9e)
+-- Dumped from database version 15.18 (f5b0bde)
 -- Dumped by pg_dump version 17.4
+
+-- Started on 2026-08-05 23:47:03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,14 +20,18 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: CENSUS_NAMES; Type: SCHEMA; Schema: -; Owner: -
+-- TOC entry 6 (class 2615 OID 24576)
+-- Name: CENSUS_NAMES; Type: SCHEMA; Schema: -; Owner: neondb_owner
 --
 
 CREATE SCHEMA "CENSUS_NAMES";
 
 
+ALTER SCHEMA "CENSUS_NAMES" OWNER TO neondb_owner;
+
 --
--- Name: check_api_key(uuid, boolean, numeric); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 256 (class 1255 OID 1204225)
+-- Name: check_api_key(uuid, boolean, numeric); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE FUNCTION "CENSUS_NAMES".check_api_key(_key uuid, _increment boolean DEFAULT false, _secondsallowed numeric DEFAULT 0) RETURNS integer
@@ -70,8 +76,11 @@ END;
 $$;
 
 
+ALTER FUNCTION "CENSUS_NAMES".check_api_key(_key uuid, _increment boolean, _secondsallowed numeric) OWNER TO neondb_owner;
+
 --
--- Name: get_weighted_first_name(text, integer, text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 257 (class 1255 OID 1638400)
+-- Name: get_weighted_first_name(text, integer, text, integer, boolean, integer); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text DEFAULT NULL::text, _yob integer DEFAULT NULL::integer, _state text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true, _quantity integer DEFAULT 1) RETURNS SETOF character varying
@@ -149,8 +158,11 @@ END;
 $$;
 
 
+ALTER FUNCTION "CENSUS_NAMES".get_weighted_first_name(_sex text, _yob integer, _state text, _percentile integer, _top boolean, _quantity integer) OWNER TO neondb_owner;
+
 --
--- Name: get_weighted_last_name(text, integer, boolean); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 258 (class 1255 OID 1638404)
+-- Name: get_weighted_last_name(text, integer, boolean, integer); Type: FUNCTION; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text DEFAULT NULL::text, _percentile integer DEFAULT 100, _top boolean DEFAULT true, _quantity integer DEFAULT 1) RETURNS SETOF character varying
@@ -232,12 +244,15 @@ END;
 $$;
 
 
+ALTER FUNCTION "CENSUS_NAMES".get_weighted_last_name(_race text, _percentile integer, _top boolean, _quantity integer) OWNER TO neondb_owner;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: apiKeys; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 244 (class 1259 OID 1155073)
+-- Name: apiKeys; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE TABLE "CENSUS_NAMES"."apiKeys" (
@@ -250,8 +265,11 @@ CREATE TABLE "CENSUS_NAMES"."apiKeys" (
 );
 
 
+ALTER TABLE "CENSUS_NAMES"."apiKeys" OWNER TO neondb_owner;
+
 --
--- Name: apiKeys_id_seq; Type: SEQUENCE; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 243 (class 1259 OID 1155072)
+-- Name: apiKeys_id_seq; Type: SEQUENCE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 ALTER TABLE "CENSUS_NAMES"."apiKeys" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
@@ -265,7 +283,8 @@ ALTER TABLE "CENSUS_NAMES"."apiKeys" ALTER COLUMN id ADD GENERATED ALWAYS AS IDE
 
 
 --
--- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 241 (class 1259 OID 32788)
+-- Name: firstNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE TABLE "CENSUS_NAMES"."firstNames" (
@@ -277,8 +296,11 @@ CREATE TABLE "CENSUS_NAMES"."firstNames" (
 );
 
 
+ALTER TABLE "CENSUS_NAMES"."firstNames" OWNER TO neondb_owner;
+
 --
--- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 242 (class 1259 OID 32793)
+-- Name: lastNames; Type: TABLE; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE TABLE "CENSUS_NAMES"."lastNames" (
@@ -292,8 +314,11 @@ CREATE TABLE "CENSUS_NAMES"."lastNames" (
 );
 
 
+ALTER TABLE "CENSUS_NAMES"."lastNames" OWNER TO neondb_owner;
+
 --
--- Name: apiKeys apiKeys_email_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 3220 (class 2606 OID 1155084)
+-- Name: apiKeys apiKeys_email_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
@@ -301,7 +326,8 @@ ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
 
 
 --
--- Name: apiKeys apiKeys_key_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 3222 (class 2606 OID 1155082)
+-- Name: apiKeys apiKeys_key_key; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
@@ -309,7 +335,8 @@ ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
 
 
 --
--- Name: apiKeys apiKeys_pkey; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 3224 (class 2606 OID 1155080)
+-- Name: apiKeys apiKeys_pkey; Type: CONSTRAINT; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
@@ -317,18 +344,38 @@ ALTER TABLE ONLY "CENSUS_NAMES"."apiKeys"
 
 
 --
--- Name: fnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 3217 (class 1259 OID 327779)
+-- Name: fnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE INDEX fnsearch_idx ON "CENSUS_NAMES"."firstNames" USING btree (state, sex, yob);
 
 
 --
--- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: -
+-- TOC entry 3218 (class 1259 OID 327729)
+-- Name: lnsearch_idx; Type: INDEX; Schema: CENSUS_NAMES; Owner: neondb_owner
 --
 
 CREATE INDEX lnsearch_idx ON "CENSUS_NAMES"."lastNames" USING btree (name, occurences, "pctWhite", "pctBlack", "pctApi", "pctAian", "pctHispanic");
 
+
+--
+-- TOC entry 2074 (class 826 OID 16389)
+-- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT ALL ON SEQUENCES TO neon_superuser WITH GRANT OPTION;
+
+
+--
+-- TOC entry 2073 (class 826 OID 16388)
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO neon_superuser WITH GRANT OPTION;
+
+
+-- Completed on 2026-08-05 23:47:06
 
 --
 -- PostgreSQL database dump complete
